@@ -9,6 +9,12 @@ void trail(NodeUtility::Node *node);
 
 namespace TempFunctions {
     //namespace for functions to refactor or utilize later
+    //namespace Prototypes
+    bool HasDuplicate(
+            const std::vector<std::pair<int, std::string>> UserInputs,
+            const std::string Ingredient);
+
+    //namespace Definitions
     std::vector<std::pair<int, std::string>> IngredientsInput(const std::string headingredient = "Head",
                                                               const std::string parentingredient = "Parent") {
         //prompt the user to type in their ingredients
@@ -21,12 +27,7 @@ namespace TempFunctions {
             bool IsDuplicate = false;
             //parse through the vector if it is not empty
             if (!ingredients.empty()) {
-                for (auto &i: ingredients) {
-                    if (i.second == ingredient) {
-                        IsDuplicate = true;
-                        break;
-                    }
-                }
+                IsDuplicate = TempFunctions::HasDuplicate(ingredients, ingredient);
             }
             if (IsDuplicate) { //if the user input is repeated
                 std::cout << "You already typed that ingredient in!" << std::endl;
@@ -63,12 +64,12 @@ namespace TempFunctions {
         //set positional index to start at
         int beginIndex = 0; //the index to start at
         if (!GlobalIngredients.empty()) {
-            beginIndex = GlobalIngredients.size()-1;
+            beginIndex = GlobalIngredients.size() - 1;
         }
         //@Note use emplace back std::make_pair
         auto ingredients = TempFunctions::IngredientsInput(Head, Parent);
         // set the positional index to end at
-        int endIndex = ingredients.size()-1+beginIndex;
+        int endIndex = ingredients.size() - 1 + beginIndex;
         //add the ingredients to the global vector
         for (auto &ingredient: ingredients) {
             GlobalIngredients.emplace_back(std::make_pair(GlobalIngredients.size(), ingredient.second));
