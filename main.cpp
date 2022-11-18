@@ -106,7 +106,7 @@ namespace TempFunctions {
         ///@brief This function will align the output
         ///@param lines The vector of strings to align
         ///@return The vector of strings aligned
-
+        ///@Note utilize the std::setw() function and iomanip library
         //figure out what is the longest string in the vector
         //append whitespace to the end of the strings to align output
         //return the vector of strings for output
