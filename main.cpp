@@ -15,6 +15,7 @@ namespace TempFunctions {
             const std::vector<std::pair<int, std::string>> UserInputs,
             const std::string Ingredient); //todo pass arguments by reference
     std::vector<std::string> alignoutput(std::vector<std::string> &lines);
+
     //namespace Definitions
     std::vector<std::pair<int, std::string>> IngredientsInput(const std::string headingredient = "Head",
                                                               const std::string parentingredient = "Parent") {
@@ -100,7 +101,8 @@ namespace TempFunctions {
         ///@param UserInputs The vector of user inputs to output
         //todo finish and debug this function
     }
-    std::vector<std::string> alignoutput(std::vector<std::string> &lines){
+
+    std::vector<std::string> alignoutput(std::vector<std::string> &lines) {
         ///@brief This function will align the output
         ///@param lines The vector of strings to align
         ///@return The vector of strings aligned
@@ -129,7 +131,7 @@ int main() {
         }
     }
     std::vector<std::pair<int, std::string>> myInputs = {};
-    myInputs = TempFunctions::MockPopulate(ingredient,"",myInputs);
+    myInputs = TempFunctions::MockPopulate(ingredient, "", myInputs);
     for (const auto &input: myInputs) { //output all the inputs to the console
         std::cout << input.first << " : " << input.second << std::endl;
     }
