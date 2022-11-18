@@ -30,9 +30,13 @@ NodeUtility::Node *populate(NodeUtility::Node *node) {
     ///@param node The node to populate
     ///@return The head Node of the ingredient tree
     //prompt the user to type in their ingredients
+    std::cout << "Type in the ingredients you need to create " << node->ingredient << ":"<< std::endl;
     //output the ingredient trail
     //create sub-nodes with each ingredient
     //recursively call this function on each sub-node
     //return the head of the ingredient tree
-    return node;
+    if (node->Parent != nullptr) {
+        NodeUtility::head(node);
+    }
+    return head(node);
 }

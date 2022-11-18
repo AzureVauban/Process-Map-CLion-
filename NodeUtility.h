@@ -24,7 +24,8 @@ namespace NodeUtility {
         Node *Parent;
         std::vector<std::pair<int, Node *>> Children;
 
-        Node(std::string ingredient = "", Node *Parent = nullptr) : Base(ingredient) {
+        Node(std::string ingredient = "", Node *Parent = nullptr)
+        : Base(ingredient) {
             this->Children = {};
             this->Parent = Parent;
             std::cout << "New Node called " << ingredient << " was made!" << std::endl;
@@ -43,11 +44,10 @@ namespace NodeUtility {
         ///@brief This function will return the head node of the tree
         ///@param node The node to find the head of
         ///@return The head Node of the ingredient tree
-        if (node->Parent) {
-            return node;
-        } else {
-            return head(node->Parent);
+        while(node->Parent) {
+            node = node->Parent;
         }
+        return node;
     }
 } // Node
 
