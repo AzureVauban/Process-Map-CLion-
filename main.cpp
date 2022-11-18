@@ -85,9 +85,14 @@ namespace TempFunctions {
     bool HasDuplicate(
             const std::vector<std::pair<int, std::string>> UserInputs,
             const std::string Ingredient) {   ///@brief This function will check if the user inputs have any duplicates
+        //todo finish and debug this function
         ///@param UserInputs The vector of user inputs
         ///@return True if there are duplicates, false if there are not
-        //todo finish and debug this function
+        for (const auto &input: UserInputs) {
+            if (input.second == Ingredient) {
+                return true;
+            }
+        }
         return false;
     }
 
