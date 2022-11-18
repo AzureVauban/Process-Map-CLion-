@@ -13,19 +13,29 @@ namespace NodeUtility {
     struct Base {
         std::string ingredient;
         int amountonhand;
+        int amountneeded;
+        int amountmadepercraft;
+        int amountresulted;
 
-        Base(std::string ingredient = "", int amountonhand = 0) {
+        Base(std::string ingredient = "",
+             int amountonhand = 0,
+             int amountmadepercraft = 0,
+             int amountneeded = 0) {
             this->ingredient = ingredient;
             this->amountonhand = amountonhand;
+            this->amountmadepercraft = amountmadepercraft;
+            this->amountneeded = amountneeded;
+            this->amountresulted = 0;
         }
     };
 
     struct Node : public Base {
         Node *Parent;
         std::vector<std::pair<int, Node *>> Children;
+        std::vector<std::pair<const std::string &, int>> Ingredients;
 
         Node(std::string ingredient = "", Node *Parent = nullptr)
-        : Base(ingredient) {
+                : Base(ingredient) {
             this->Children = {};
             this->Parent = Parent;
             std::cout << "New Node called " << ingredient << " was made!" << std::endl;
@@ -38,13 +48,21 @@ namespace NodeUtility {
                 delete child.second;
             }
         }
+
+        virtual int recursivearithmetic(Node *node) {
+            return node->amountresulted;
+        }
+
+        virtual int reversearithmetic(Node *node, const int desiredamount) {
+            return node->amountonhand;
+        }
     };
 
     Node *head(Node *node) {
         ///@brief This function will return the head node of the tree
         ///@param node The node to find the head of
         ///@return The head Node of the ingredient tree
-        while(node->Parent) {
+        while (node->Parent) { //traverse to the head of the ingredient tree
             node = node->Parent;
         }
         return node;
