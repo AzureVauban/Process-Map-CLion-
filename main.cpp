@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 #include "NodeUtility.h"
 
@@ -10,10 +11,10 @@ void trail(NodeUtility::Node *node);
 namespace TempFunctions {
     //namespace for functions to refactor or utilize later
     //namespace Prototypes
-    bool HasDuplicate(
+    bool HasDuplicate( //check if the vector has a duplicate string
             const std::vector<std::pair<int, std::string>> UserInputs,
-            const std::string Ingredient);
-
+            const std::string Ingredient); //todo pass arguments by reference
+    std::vector<std::string> alignoutput(std::vector<std::string> &lines);
     //namespace Definitions
     std::vector<std::pair<int, std::string>> IngredientsInput(const std::string headingredient = "Head",
                                                               const std::string parentingredient = "Parent") {
@@ -99,6 +100,17 @@ namespace TempFunctions {
         ///@param UserInputs The vector of user inputs to output
         //todo finish and debug this function
     }
+    std::vector<std::string> alignoutput(std::vector<std::string> &lines){
+        ///@brief This function will align the output
+        ///@param lines The vector of strings to align
+        ///@return The vector of strings aligned
+
+        //figure out what is the longest string in the vector
+        //append whitespace to the end of the strings to align output
+        //return the vector of strings for output
+        //todo finish and debug this function
+        return lines;
+    }
 }
 
 int main() {
@@ -118,6 +130,9 @@ int main() {
     }
     std::vector<std::pair<int, std::string>> myInputs = {};
     myInputs = TempFunctions::MockPopulate(ingredient,"",myInputs);
+    for (const auto &input: myInputs) { //output all the inputs to the console
+        std::cout << input.first << " : " << input.second << std::endl;
+    }
     //auto head = populate(new NodeUtility::Node(ingredient));
     //delete head;
     return 0;
