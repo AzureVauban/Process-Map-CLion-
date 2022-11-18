@@ -31,8 +31,12 @@ namespace NodeUtility {
 
     struct Node : public Base {
         Node *Parent;
+        int instancekey = 0;
+        const int generation = 0;
+        int population = 0;
+
         std::vector<std::pair<int, Node *>> Children;
-        std::vector<std::pair<const std::string &, int>> Ingredients;
+        std::vector<std::pair<const std::string &, int>> ResultedAmountsBuffer;
 
         Node(std::string ingredient = "", Node *Parent = nullptr)
                 : Base(ingredient) {
@@ -48,9 +52,23 @@ namespace NodeUtility {
                 delete child.second;
             }
         }
-
-        virtual int recursivearithmetic(Node *node) {
-            return node->amountresulted;
+        virtual int Population(int &countpopulation){ //todo test this function
+            ///@brief This function will count how many Node instances are in the ingredient tree
+            ///@param countpopulation The countpopulation of the ingredient tree
+            ///@return The countpopulation of the ingredient tree
+            countpopulation += 1;
+            //recursively call this function on each sub-node
+            for (auto &child: this->Children) {
+                child.second->Population(countpopulation);
+            }
+            return countpopulation;
+        }
+        virtual int recursivearithmetic() {
+            if (this->Parent)
+            {
+                this->Parent->recursivearithmetic();
+            }
+            return this->amountresulted;
         }
 
         virtual int reversearithmetic(Node *node, const int desiredamount) {
