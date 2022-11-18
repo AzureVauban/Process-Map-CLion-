@@ -26,10 +26,7 @@ namespace TempFunctions {
             //strip leading and trailing whitespace from ingredient
             bool IsDuplicate = false;
             //parse through the vector if it is not empty
-            if (!ingredients.empty()) {
-                IsDuplicate = TempFunctions::HasDuplicate(ingredients, ingredient);
-            }
-            if (IsDuplicate) { //if the user input is repeated
+            if (TempFunctions::HasDuplicate(ingredients, ingredient)) { //if the user input is repeated
                 std::cout << "You already typed that ingredient in!" << std::endl;
             } else if (ingredient.empty()) { //if the user input is empty break out of the loop
                 break;
@@ -51,9 +48,9 @@ namespace TempFunctions {
         return ingredients;
     }
 
-    std::vector<std::pair<int, std::string>> MockPopulate(const std::string Head = "Head",
-                                                          const std::string Parent = "Parent",
-                                                          std::vector<std::pair<int, std::string>> GlobalIngredients = {}) {
+    std::vector<std::pair<int, std::string>> MockPopulate(const std::string &Head,
+                                                          const std::string &Parent,
+                                                          std::vector<std::pair<int, std::string>> &GlobalIngredients) {
 
         ///@brief This function will mock populate the tree
         ///@param Head The head ingredient
@@ -119,7 +116,8 @@ int main() {
             break;
         }
     }
-    TempFunctions::MockPopulate(ingredient);
+    std::vector<std::pair<int, std::string>> myInputs = {};
+    myInputs = TempFunctions::MockPopulate(ingredient,"",myInputs);
     //auto head = populate(new NodeUtility::Node(ingredient));
     //delete head;
     return 0;
