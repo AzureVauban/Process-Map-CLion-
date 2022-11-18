@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include <iomanip>
+//#include <iomanip>
 
-#include "NodeUtility.h"
+#include "Include/NodeUtility.h"
 
 NodeUtility::Node *populate(NodeUtility::Node *node);
 
@@ -10,6 +10,45 @@ void trail(NodeUtility::Node *node);
 
 namespace TempFunctions {
     //namespace for functions to refactor or utilize later
+    struct simpleNode{
+        std::string Ingredient;
+        simpleNode* Next;
+        std::vector<simpleNode*> Prev;
+        //constructor
+        simpleNode(std::string Ingredient = "",
+                   simpleNode* Next = nullptr)
+        {
+            this->Ingredient = Ingredient;
+            this->Next = Next;
+            if (this->Next)
+            {
+                this->Next->Prev.emplace_back(this);
+            }
+        }
+
+        //setters
+        void setIngredient(std::string &basicString) {
+            this->Ingredient = basicString;
+        }
+        //destructor
+        ~simpleNode() {
+            for (auto &i : Prev)
+            {
+                delete i;
+            }
+        }
+
+        //getters
+        std::vector<std::string> AllIngredients(std::vector<std::string>& Ingredients){
+            Ingredients.emplace_back(this->Ingredient);
+            for (auto &i : this->Prev)
+            {
+                i->AllIngredients(Ingredients);
+            }
+            return Ingredients;
+        }
+    };
+
     //namespace Prototypes
     bool HasDuplicate( //check if the vector has a duplicate string
             const std::vector<std::pair<int, std::string>> UserInputs,

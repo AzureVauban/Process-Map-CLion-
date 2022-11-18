@@ -72,6 +72,9 @@ namespace NodeUtility {
         }
 
         virtual int reversearithmetic(Node *node, const int desiredamount) {
+            for (auto &child: node->Children) {
+                child.second->reversearithmetic(child.second, amountonhand);
+            }
             return node->amountonhand;
         }
     };
