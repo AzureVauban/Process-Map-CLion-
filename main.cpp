@@ -93,16 +93,16 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
     ///@return The sub-node created
     std::vector<std::pair<int, Nodes::Node *>> subnodes;
     struct headerstuple {
-        std::string first; // index of the subnode
-        std::string second; // ingredient of the subnode
+        std::string Index; // index of the subnode
+        std::string Ingredient; // ingredient of the subnode
         std::string ParentIngredient; // Parent Ingredient of the subnode
         std::string Generation; // generation
         headerstuple(int first, std::string &second, std::string &third, const int fourth) {
             std::stringstream ss;
             // convert the index to a string
             ss << first;
-            this->first = ss.str();
-            this->second = second;
+            this->Index = ss.str();
+            this->Ingredient = second;
             this->ParentIngredient = third;
             //clear ss
             ss.str(std::string());
@@ -121,8 +121,8 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                                           subnodes[0].second->Parent->ingredient,
                                           -1));
         //overwrite the headers with the correct values
-        headers[0].first = "Index";
-        headers[0].second = "Ingredient"; // OMIT THIS COLUMN
+        headers[0].Index = "Index";
+        headers[0].Ingredient = "Ingredient"; // OMIT THIS COLUMN
         headers[0].ParentIngredient = "Parent Ingredient";
         headers[0].Generation = "Generation";
         //create a vector of vectors of strings
@@ -136,11 +136,11 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
         int Longest[4] = {0, 0, 0, 0};
         for (int i = 0; i < headers.size(); i++) {
             //find the longest string in each column
-            if (headers[i].first.length() > Longest[0]) {
-                Longest[0] = headers[i].first.length();
+            if (headers[i].Index.length() > Longest[0]) {
+                Longest[0] = headers[i].Index.length();
             }
-            if (headers[i].second.length() > Longest[1]) {
-                Longest[1] = headers[i].second.length();
+            if (headers[i].Ingredient.length() > Longest[1]) {
+                Longest[1] = headers[i].Ingredient.length();
             }
             if (headers[i].ParentIngredient.length() > Longest[2]) {
                 Longest[2] = headers[i].ParentIngredient.length();
@@ -157,15 +157,15 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
         for (auto &header: headers) {
             //append WS to the end of all strings in the first column
             //append the '|' character to the end of each string in ALL elements
-            while (header.first.length() < Longest[0]) {
-                header.first += " ";
+            while (header.Index.length() < Longest[0]) {
+                header.Index += " ";
             }
-            header.first += "|";
+            header.Index += "|";
             //append WS to the end of all strings in the second column
-            while (header.second.length() < Longest[1]) {
-                header.second += " ";
+            while (header.Ingredient.length() < Longest[1]) {
+                header.Ingredient += " ";
             }
-            header.second += "|";
+            header.Ingredient += "|";
             //append WS to the end of all strings in the third column
             while (header.ParentIngredient.length() < Longest[2]) {
                 header.ParentIngredient += " ";
@@ -179,8 +179,8 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
         std::cout << "Type in the Index of an item you want to use:" << std::endl;
         //output the headers
         for (auto &header: headers) {
-            std::cout << header.first
-                      << header.second
+            std::cout << header.Index
+                      << header.Ingredient
                       << header.ParentIngredient
                       << header.Generation << std::endl;
         }
