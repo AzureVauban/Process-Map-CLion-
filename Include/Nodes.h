@@ -133,7 +133,26 @@ namespace Nodes {
         }
         return node;
     }
-
+    Node* clone(Node*Target,const bool clonesubnodes)
+    {
+        /// @brief Create a clone of the Parent node
+        /// @param Target Node to clone from
+        /// @param clonesubnodes Whether or not to clone subnodes
+        /// @return a clone of a argument node
+        if (clonesubnodes && !Target->Children.empty())
+        {
+            //recursively clone subnodes
+            for (auto& subnode : Target->Children)
+            {
+                clone(subnode.second, false);
+            }
+        }
+        return new Node(Target->ingredient, 
+        Target->Parent, 
+        Target->amountonhand, 
+        Target->amountmadepercraft,
+        Target->amountneeded);
+    }
     namespace temporary {
         //temporary functions for testing output to Console
         std::vector<std::string> AllIngredients(const Node *node, //* start this function off with head Node

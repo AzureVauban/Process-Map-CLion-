@@ -2,9 +2,29 @@
 #include <string>
 #include <sstream>
 //#include <iomanip>
-
+/*
+ONLY USE AUTO FORMATTING IN CLION IDE
+*/
 #include "Include/Nodes.h"
-
+/*
+Main.cpp should only contain populate, input, and their respective utility functions
+Nodes.h should include utility for Node functions and other functions
+*/
+//prompt input from user
+int promptint()
+{
+    ///@brief Prompts user for string input and returns it as an int
+    ///@return integer  
+    std::stringstream ss;
+    std::string input;
+    int output;
+    std::getline(std::cin, input);
+    //strip whitespace
+    //check if each character is a digit (no negs or decimals)
+    ss << input;
+    ss >> output;
+    return output;
+}
 Nodes::Node *populate(Nodes::Node *head);
 
 Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &ingredient);
@@ -92,29 +112,43 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
     ///@param Ingredient The ingredient to create the sub-node from
     ///@return The sub-node created
     std::vector<std::pair<int, Nodes::Node *>> subnodes;
-    struct headerstuple {
+    static struct headerstuple {
+        /// @brief Singleton class to store the headers of the subnodes in subpopulate
         std::string Index; // index of the subnode
         std::string Ingredient; // ingredient of the subnode
         std::string ParentIngredient; // Parent Ingredient of the subnode
         std::string Generation; // generation
-        headerstuple(int first, std::string &second, std::string &third, const int fourth) {
+        headerstuple(const int Index, std::string &Ingredient, 
+        std::string &ParentIngredient, const int Generation) {
             std::stringstream ss;
             // convert the index to a string
-            ss << first;
+            ss << Index;
             this->Index = ss.str();
-            this->Ingredient = second;
-            this->ParentIngredient = third;
+            this->Ingredient = Ingredient;
+            this->ParentIngredient = ParentIngredient;
             //clear ss
             ss.str(std::string());
             //convert generation into a string
-            ss << fourth;
+            ss << Generation;
             this->Generation = ss.str();
+        }
+        virtual void destroy()
+        {
+            //clears all the strings
+            this->Index.clear();
+        }
+        ~headerstuple()
+        {
+            destroy();
         }
     };
     std::vector<headerstuple> headers = {};
     const int SIZEOFSEARCH = Nodes::head(Parent)->Search(Ingredient, subnodes).size();
     if (SIZEOFSEARCH == 1 && Parent->Parent) {
         std::cout << "\x1B[31mNOT ADDED YET, SKIPPING, ONLY 1 INGREDIENT\x1B[0m" << std::endl;
+        //todo get user input (Y/N)
+        return new Nodes::Node(Ingredient, Parent);
+        //todo call Nodes::Clone(NODE) on valid index
     } else if (SIZEOFSEARCH > 1 && Parent->Parent) {
         // create a vector of headers
         headers.emplace_back(headerstuple(-1, // index
@@ -177,7 +211,7 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                 header.Generation += " ";
             }
         }
-        std::cout << "Type in the Index of an item you want to use:" << std::endl;
+        std::cout << "Type in the Index of an item you want to use: (Type a number out of range to disregard)" << std::endl;
         //output the headers
         for (auto &header: headers) {
             std::cout << header.Index
@@ -185,7 +219,9 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                       << header.ParentIngredient
                       << header.Generation << std::endl;
         }
+        //todo get user input (1-n)
         return new Nodes::Node(Ingredient, Parent);
+        //todo call Nodes::Clone(NODE) on valid index
     } //if the size of the Search is 0, return a new subnode
     //call search function on the head of the ingredient
     return new Nodes::Node(Ingredient, Parent);
