@@ -39,8 +39,15 @@ namespace Nodes {
         std::vector<std::pair<int, Node *>> Children;
         std::vector<std::pair<const std::string &, int>> ResultedAmountsBuffer;
 
-        Node(std::string ingredient = "", Node *Parent = nullptr)
-                : Base(ingredient) {
+        Node(std::string ingredient = "",
+             Node *Parent = nullptr,
+             int amountonhand = 0,
+             int amountmadepercraft = 1,
+             int amountneeded = 1)
+                : Base(ingredient,
+                       amountonhand,
+                       amountmadepercraft,
+                       amountneeded) {
             this->Children = {};
             this->Parent = Parent;
             this->instancekey = instances;
@@ -52,11 +59,9 @@ namespace Nodes {
             }
             instances++;
             this->population = this->CountNodes(this->population);
-            //? std::cout << "New Node called " << ingredient << " was made!" << std::endl;
         }
 
         ~Node() {
-            //? std::cout << "Node called " << ingredient << " was deleted!" << std::endl;
             //recursively deallocate all sub-nodes
             for (auto &child: Children) {
                 delete child.second;
@@ -75,7 +80,6 @@ namespace Nodes {
             return countpopulation;
         }
 
-        //todo make function to update the CountNodes variable of all Nodes in a tree
         void UpdatePopulation(const int countpopulation) {
             ///@brief This function will update the CountNodes variable of all Nodes in a tree
             ///@param countpopulation The countpopulation of the ingredient tree
@@ -127,7 +131,11 @@ namespace Nodes {
             }
             return Ingredients;
         }
-        std::vector<std::string> AlignAllIngredients(Node* StartingNode){
+
+        std::vector<std::string> AlignAllIngredients(Node *StartingNode) {
+            ///@brief This function will return a vector of all ingredients in the tree and print them to the console
+            ///@param StartingNode The node to start the alignment from
+            ///@return The vector of ingredients
             std::vector<std::string> Ingredients;
             Ingredients = AllIngredients(head(StartingNode), Ingredients);
             //find the length of the longest string
@@ -146,7 +154,7 @@ namespace Nodes {
             }
             //test output alignment
             for (int i = 0; i < Ingredients.size(); i++) {
-                std::cout << i << ": " << Ingredients[i] << "| " <<&Ingredients[i] << std::endl;
+                std::cout << i << ": " << Ingredients[i] << "| " << &Ingredients[i] << std::endl;
             }
             //return the modified vector
             return Ingredients;
