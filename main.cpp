@@ -92,34 +92,34 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
     ///@param Ingredient The ingredient to create the sub-node from
     ///@return The sub-node created
     std::vector<std::pair<int, Nodes::Node *>> subnodes;
-    if (!Nodes::head(Parent)->Search(Ingredient, subnodes).empty() && Parent->Parent) {
-        struct headerstuple {
-            std::string first; // index of the subnode
-            std::string second; // ingredient of the subnode
-            std::string third; // Parent Ingredient of the subnode
-            std::string fourth; // generation
-            headerstuple(int first, std::string &second, std::string &third, const int fourth) {
-                std::stringstream ss;
-                // convert the index to a string
-                ss << first;
-                this->first = ss.str();
-                this->second = second;
-                this->third = third;
-                //clear ss
-                ss.str(std::string());
-                //convert generation into a string
-                ss << fourth;
-                this->fourth = ss.str();
-            }
-        };
-        std::vector<headerstuple> headers = {};
+    struct headerstuple {
+        std::string first; // index of the subnode
+        std::string second; // ingredient of the subnode
+        std::string third; // Parent Ingredient of the subnode
+        std::string fourth; // generation
+        headerstuple(int first, std::string &second, std::string &third, const int fourth) {
+            std::stringstream ss;
+            // convert the index to a string
+            ss << first;
+            this->first = ss.str();
+            this->second = second;
+            this->third = third;
+            //clear ss
+            ss.str(std::string());
+            //convert generation into a string
+            ss << fourth;
+            this->fourth = ss.str();
+        }
+    };
+    std::vector<headerstuple> headers = {};
+    if (Nodes::head(Parent)->Search(Ingredient, subnodes).size()== 1 && Parent->Parent){std::cout << "\x1B[31mNOT ADDED YET, SKIPPING, ONLY 1 INGREDIENT\x1B[0m"} else if (Nodes::head(Parent)->Search(Ingredient, subnodes).size()>= 2 && Parent->Parent) {
         // create a vector of headers
         headers.emplace_back(headerstuple(-1, subnodes[0].second->ingredient,
                                           subnodes[0].second->Parent->ingredient,
                                           -1));
         //overwrite the headers with the correct values
         headers[0].first = "Index";
-        headers[0].second = "Ingredient";
+        headers[0].second = "Ingredient"; // OMIT THIS COLUMN
         headers[0].third = "Parent Ingredient";
         headers[0].fourth = "Generation";
         //create a vector of vectors of strings
@@ -173,6 +173,7 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                 header.fourth += " ";
             }
         }
+        std::cout << "Type in the Index of an item you want to use:" << std::endl;
         //output the headers
         for (auto &header: headers) {
             std::cout << header.first
@@ -181,9 +182,10 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                       << header.fourth << std::endl;
         }
         return new Nodes::Node(Ingredient, Parent);
+    } else{
+        //call search function on the head of the ingredient
+        return new Nodes::Node(Ingredient, Parent);
     }
-    //call search function on the head of the ingredient
-    return new Nodes::Node(Ingredient, Parent);
 }
 
 void trail(Nodes::Node *node) {
