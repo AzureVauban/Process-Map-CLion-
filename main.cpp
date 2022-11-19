@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 //#include <iomanip>
 
 #include "Include/Nodes.h"
@@ -9,6 +10,8 @@ Nodes::Node *populate(Nodes::Node *head);
 Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &ingredient);
 
 void trail(Nodes::Node *node);
+
+bool duplicate(const std::vector<std::string> &Inputs, const std::string &Input);
 
 int main() {
     // prompt user to type in the name of the item they want to create
@@ -27,7 +30,7 @@ int main() {
     }
     auto head = populate(new Nodes::Node(ingredient));
     Nodes::temporary::AlignAllIngredients(head);
-    std::cout << "Populate of Tree: " << head->population << std::endl;
+    std::cout << "Population of Tree: " << head->population << std::endl;
     delete head;
     return 0;
 }
@@ -47,8 +50,20 @@ Nodes::Node *populate(Nodes::Node *head) {
     while (true) {
         std::string ingredient;
         std::getline(std::cin, ingredient);
+        //strip remove leading and trailing whitespace
+        ingredient.erase(0, ingredient.find_first_not_of(' '));
         if (ingredient.empty()) {
+            //check if the ingredient is empty
             break;
+        } else if (head->ingredient == ingredient) {
+            //check if the ingredient is the same as the parent ingredient
+            std::cout << "Invaild Input, you're trying to make this item from itself" << std::endl;
+        } else if (Nodes::head(head)->ingredient == ingredient) {
+            //check if the ingredient is the same as the head ingredient
+            std::cout << "Invalid input, you're trying to make this item!" << std::endl;
+        } else if (duplicate(ingredients, ingredient)) {
+            //check if the ingredient is a duplicate
+            std::cout << "You have already entered this ingredient" << std::endl;
         } else {
             ingredients.emplace_back(ingredient);
         }
@@ -71,7 +86,39 @@ Nodes::Node *populate(Nodes::Node *head) {
     return head;
 }
 
-Nodes::Node *subpopulate(Nodes::Node *Parent,const std::string &Ingredient) {
+Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
+    ///@brief This function will create a sub-node with the given ingredient
+    ///@param Parent The parent node to create the sub-node from
+    ///@param Ingredient The ingredient to create the sub-node from
+    ///@return The sub-node created
+    std::vector<std::pair<int, Nodes::Node *>> subnodes;
+    if (!Nodes::head(Parent)->Search(Ingredient,subnodes).empty()){
+        //append whitespace to the ingredient to get the correct alignment
+        int lengthoflongeststring = 0;
+        std::vector<std::pair<int,std::string>> Ingredients;
+        for (auto &itemname : subnodes){
+            //check if the length of the Node instances ingredient is longer than the current longest string length
+            if (itemname.second->ingredient.length() > lengthoflongeststring){
+                lengthoflongeststring = itemname.second->ingredient.length();
+            }
+            //add the ingredient to the vector
+            Ingredients.emplace_back(itemname.first,itemname.second->ingredient);
+        }
+        //append whitespace to the ingredient to get the correct alignment
+        lengthoflongeststring += 2;
+        for (auto &itemname : Ingredients){
+            //append whitespace to the ingredient to get the correct alignment
+            while (itemname.second.length() < lengthoflongeststring){
+                itemname.second += " ";
+            }
+        }
+        //output the ingredients
+        std::cout << "Which of these Nodes do you want to clone:" << std::endl;
+        for (auto &itemname : Ingredients){
+            std::cout << itemname.first << ". " << itemname.second << std::endl;
+        }
+    }
+    //call search function on the head of the ingredient
     return new Nodes::Node(Ingredient, Parent);
 }
 
@@ -87,4 +134,17 @@ void trail(Nodes::Node *node) {
             break;
         }
     }
+}
+
+bool duplicate(const std::vector<std::string> &Inputs, const std::string &Input) {
+    ///@brief This function will check if the input is a duplicate
+    ///@param Inputs The vector of inputs to check
+    ///@param Input The input to check
+    ///@return True if the input is a duplicate, false if it is not
+    for (auto &input: Inputs) {
+        if (input == Input) {
+            return true;
+        }
+    }
+    return false;
 }

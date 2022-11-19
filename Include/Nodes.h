@@ -90,6 +90,23 @@ namespace Nodes {
             }
         }
 
+        std::vector<std::pair<int, Node *>> Search(const std::string &Ingredient,
+                                                   std::vector<std::pair<int, Node *>> &Results){
+            ///@brief This function will search for a Node with the given ingredient
+            ///@param Ingredient The ingredient to search for
+            ///@param Results The vector of results to add to
+            ///@return The vector of results
+            ///@note This function will search recursively through all sub-nodes
+            if (this->ingredient == Ingredient) {
+                Results.emplace_back(this->instancekey, this);
+            }
+            //recursively call this function on each sub-node
+            for (auto &child: this->Children) {
+                child.second->Search(Ingredient, Results);
+            }
+            return Results;
+        }
+
         int recursivearithmetic() {
             if (this->Parent) {
                 this->Parent->recursivearithmetic();
