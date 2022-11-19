@@ -172,7 +172,6 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
             while (header.fourth.length() < Longest[3]) {
                 header.fourth += " ";
             }
-            header.fourth += "|";
         }
         //output the headers
         for (auto &header: headers) {
