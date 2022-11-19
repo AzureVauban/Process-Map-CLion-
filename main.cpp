@@ -98,20 +98,31 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
             std::string second; // ingredient of the subnode
             std::string third; // Parent Ingredient of the subnode
             std::string fourth; // generation
-            headerstuple(int &first, std::string &second, std::string &third, const int &fourth) {
+            headerstuple(int first, std::string &second, std::string &third, const int fourth) {
                 std::stringstream ss;
                 // convert the index to a string
                 ss << first;
                 this->first = ss.str();
                 this->second = second;
                 this->third = third;
+                //clear ss
+                ss.str(std::string());
                 //convert generation into a string
                 ss << fourth;
                 this->fourth = ss.str();
             }
         };
-        std::vector<headerstuple> headers;
+        std::vector<headerstuple> headers = {};
         // create a vector of headers
+        headers.emplace_back(headerstuple(-1, subnodes[0].second->ingredient,
+                                          subnodes[0].second->Parent->ingredient,
+                                          -1));
+        //overwrite the headers with the correct values
+        headers[0].first = "Index";
+        headers[0].second = "Ingredient";
+        headers[0].third = "Parent Ingredient";
+        headers[0].fourth = "Generation";
+        //create a vector of vectors of strings
         for (auto &subnode: subnodes) {
             headers.emplace_back(headerstuple(subnode.first,  //index of subnode in search vector
                                               subnode.second->ingredient, //ingredient of subnode
@@ -119,6 +130,57 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                                               subnode.second->generation)); //generation of subnode
         }
         //align the headers
+        int Longest[4] = {0, 0, 0, 0};
+        for (int i = 0; i < headers.size(); i++) {
+            //find the longest string in each column
+            if (headers[i].first.length() > Longest[0]) {
+                Longest[0] = headers[i].first.length();
+            }
+            if (headers[i].second.length() > Longest[1]) {
+                Longest[1] = headers[i].second.length();
+            }
+            if (headers[i].third.length() > Longest[2]) {
+                Longest[2] = headers[i].third.length();
+            }
+            if (headers[i].fourth.length() > Longest[3]) {
+                Longest[3] = headers[i].fourth.length();
+            }
+        }
+        //add 1 Space to each column
+        for (auto &num: Longest) {
+            num += 1;
+        }
+        //append whitespace to the end of each string to make them all the same length
+        for (auto &header: headers) {
+            //append WS to the end of all strings in the first column
+            //append the '|' character to the end of each string in ALL elements
+            while (header.first.length() < Longest[0]) {
+                header.first += " ";
+            }
+            header.first += "|";
+            //append WS to the end of all strings in the second column
+            while (header.second.length() < Longest[1]) {
+                header.second += " ";
+            }
+            header.second += "|";
+            //append WS to the end of all strings in the third column
+            while (header.third.length() < Longest[2]) {
+                header.third += " ";
+            }
+            header.third += "|";
+            //append WS to the end of all strings in the fourth column
+            while (header.fourth.length() < Longest[3]) {
+                header.fourth += " ";
+            }
+            header.fourth += "|";
+        }
+        //output the headers
+        for (auto &header: headers) {
+            std::cout << header.first
+                      << header.second
+                      << header.third
+                      << header.fourth << std::endl;
+        }
         return new Nodes::Node(Ingredient, Parent);
     }
     //call search function on the head of the ingredient
