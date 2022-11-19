@@ -117,9 +117,10 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
         std::cout << "\x1B[31mNOT ADDED YET, SKIPPING, ONLY 1 INGREDIENT\x1B[0m" << std::endl;
     } else if (SIZEOFSEARCH > 1 && Parent->Parent) {
         // create a vector of headers
-        headers.emplace_back(headerstuple(-1, subnodes[0].second->ingredient,
-                                          subnodes[0].second->Parent->ingredient,
-                                          -1));
+        headers.emplace_back(headerstuple(-1, // index
+                                          subnodes[0].second->ingredient, // ingredient
+                                          subnodes[0].second->Parent->ingredient, // parent ingredient
+                                          -1)); // generation
         //overwrite the headers with the correct values
         headers[0].Index = "Index";
         headers[0].Ingredient = "Ingredient"; // OMIT THIS COLUMN
