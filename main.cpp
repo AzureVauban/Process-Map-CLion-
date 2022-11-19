@@ -11,8 +11,7 @@ Main.cpp should only contain populate, input, and their respective utility funct
 Nodes.h should include utility for Node functions and other functions
 */
 //prompt input from user
-int promptint()
-{
+int promptint() {
     ///@brief Prompts user for string input and returns it as an int
     ///@return integer  
     std::stringstream ss;
@@ -25,6 +24,7 @@ int promptint()
     ss >> output;
     return output;
 }
+
 Nodes::Node *populate(Nodes::Node *head);
 
 Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &ingredient);
@@ -112,14 +112,14 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
     ///@param Ingredient The ingredient to create the sub-node from
     ///@return The sub-node created
     std::vector<std::pair<int, Nodes::Node *>> subnodes;
-    static struct headerstuple {
+    struct headerstuple {
         /// @brief Singleton class to store the headers of the subnodes in subpopulate
         std::string Index; // index of the subnode
         std::string Ingredient; // ingredient of the subnode
         std::string ParentIngredient; // Parent Ingredient of the subnode
         std::string Generation; // generation
-        headerstuple(const int Index, std::string &Ingredient, 
-        std::string &ParentIngredient, const int Generation) {
+        headerstuple(const int Index, std::string &Ingredient,
+                     std::string &ParentIngredient, const int Generation) {
             std::stringstream ss;
             // convert the index to a string
             ss << Index;
@@ -132,14 +132,13 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
             ss << Generation;
             this->Generation = ss.str();
         }
-        virtual void destroy()
-        {
-            //clears all the strings
-            this->Index.clear();
-        }
-        ~headerstuple()
-        {
-            destroy();
+
+        ~headerstuple() {
+            //clears string
+            Index.clear();
+            Ingredient.clear();
+            ParentIngredient.clear();
+            Generation.clear();
         }
     };
     std::vector<headerstuple> headers = {};
@@ -211,7 +210,8 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                 header.Generation += " ";
             }
         }
-        std::cout << "Type in the Index of an item you want to use: (Type a number out of range to disregard)" << std::endl;
+        std::cout << "Type in the Index of an item you want to use: (Type a number out of range to disregard)"
+                  << std::endl;
         //output the headers
         for (auto &header: headers) {
             std::cout << header.Index
