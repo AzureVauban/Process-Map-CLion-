@@ -93,77 +93,32 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
     ///@return The sub-node created
     std::vector<std::pair<int, Nodes::Node *>> subnodes;
     if (!Nodes::head(Parent)->Search(Ingredient, subnodes).empty() && Parent->Parent) {
-        //append whitespace to the ingredient to get the correct alignment
-        int lenlongestStr = 0;
-        int lenlongestParStr = 0;
-        std::vector<std::pair<int, std::string>> Ingredients;
-        std::vector<std::pair<int, std::string>> ParentIngredients;
-        for (auto &itemname: subnodes) {
-            //check if the length of the Node instances ingredient is longer than the current longest string length
-            if (itemname.second->ingredient.length() > lenlongestStr) {
-                // for Node
-                lenlongestStr = itemname.second->ingredient.length();
+        struct headerstuple {
+            std::string first; // index of the subnode
+            std::string second; // ingredient of the subnode
+            std::string third; // Parent Ingredient of the subnode
+            std::string fourth; // generation
+            headerstuple(int &first, std::string &second, std::string &third, const int &fourth) {
+                std::stringstream ss;
+                // convert the index to a string
+                ss << first;
+                this->first = ss.str();
+                this->second = second;
+                this->third = third;
+                //convert generation into a string
+                ss << fourth;
+                this->fourth = ss.str();
             }
-            if (itemname.second->Parent->ingredient.length() > lenlongestParStr) {
-                // for Parent
-                lenlongestParStr = itemname.second->Parent->ingredient.length();
-            }
-            //add the ingredient to the vector
-            Ingredients.emplace_back(itemname.first,
-                                     itemname.second->ingredient);
-            ParentIngredients.emplace_back(itemname.first,
-                                           itemname.second->Parent->ingredient);
+        };
+        std::vector<headerstuple> headers;
+        // create a vector of headers
+        for (auto &subnode: subnodes) {
+            headers.emplace_back(headerstuple(subnode.first,  //index of subnode in search vector
+                                              subnode.second->ingredient, //ingredient of subnode
+                                              subnode.second->Parent->ingredient, //parent ingredient of subnode
+                                              subnode.second->generation)); //generation of subnode
         }
-        //format output to align the ingredients
-        lenlongestStr += 2;
-        for (int i = 0; i < Ingredients.size(); i++) {
-            //append WS for alignment
-            while (Ingredients.at(i).second.length() < lenlongestStr) {
-                Ingredients.at(i).second += " | ";
-            }
-            //append WS on Parent Ingredient
-            while (ParentIngredients.at(i).second.length() < lenlongestParStr) {
-                ParentIngredients.at(i).second += " | ";
-            }
-            Ingredients.at(i).second += ParentIngredients.at(i).second;
-            //append generation number to the string
-            std::stringstream ss;
-            ss << subnodes.at(i).second->generation;
-            std::string generation = ss.str();
-            Ingredients.at(i).second += " | " + generation;
-            //prepend the index to the Ingredients as a string
-            std::stringstream ssbuffer;
-            ssbuffer << Ingredients.at(i).first;
-            Ingredients.at(i).second = ssbuffer.str() + ": " + Ingredients.at(i).second;
-        }
-        //output the ingredients
-        std::cout << "Which of these Nodes do you want to clone:" << std::endl;
-        //add column headers
-        std::vector<std::string> headers = {"Index", //append WS (longest string length + 2)
-                                            "Ingredient",
-                                            "Parent Ingredient",
-                                            "Generation"};
         //align the headers
-        /*
-         aligning Index
-        while (headers[0].length() != headers[0].length() + lenlongestStr) {
-            //append WS to "Index" to align with Ingredient
-            headers[0] += " ";
-        }
-         */
-
-        //output column headers
-        for (auto &header: headers) {
-            std::cout << header << " | ";
-        }
-        std::cout << std::endl;
-        for (int i = 0; i < Ingredients.size(); i++) {
-            std::cout << Ingredients[i].second << std::endl;
-        }
-        std::cout << std::endl;
-        //prompt the user to select the ingredient they want to clone
-        int selection_index = 0;
-        //todo finish creating this function
         return new Nodes::Node(Ingredient, Parent);
     }
     //call search function on the head of the ingredient
