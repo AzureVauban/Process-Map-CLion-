@@ -21,7 +21,12 @@ int promptint() {
     //strip whitespace
     input.erase(0, input.find_first_not_of(' '));
     //check if each character is a digit (no negs or decimals)
-
+    for (char c: input) {
+        if (!isdigit(c)) {
+            std::cout << "Invalid input. Please enter a number." << std::endl;
+            return promptint();
+        }
+    }
     ss << input;
     ss >> output;
     return output;
@@ -206,11 +211,25 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
         std::cout << std::endl;
         std::cout << "Enter the number (Choice) of the item you want to clone (Type 0 if you do not want to clone): "
                   << std::endl;
-        return new Nodes::Node(Ingredient, Parent);
+        //get the user input
+        while (true) {
+            int choice = promptint();
+            //if the user input is above the maximum index for choices or below 0, tell the user that the input is invalid
+            if (choice < 0 && choice > subnodes.size()) {
+                //if choice is less than 0 and greater than the size of the subnodes vector, the input is invalid (out of range)
+                std::cout << "Invalid input, please enter a number between 0 and " << subnodes.size() << std::endl;
+            } else if (choice == 0) {
+                //if the user input is 0, return a new Node without cloning
+                return new Nodes::Node(Ingredient, Parent);
+            } else {
+                //else return a clone of the Node at the selected index of the subnodes vector
+                return Nodes::clone(subnodes[choice - 1].second, true);
+            }
+        }
+        //return new Nodes::Node(Ingredient, Parent);
     } else {
         // if there are no ingredients from the search
-        return new Nodes::Node(Ingredient, Parent
-        );
+        return new Nodes::Node(Ingredient, Parent);
     }
 }
 
