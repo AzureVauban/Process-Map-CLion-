@@ -23,7 +23,7 @@ int promptint() {
     //check if each character is a digit (no negs or decimals)
     for (char c: input) {
         if (!isdigit(c)) {
-            std::cout << "Invalid input. Please enter a number." << std::endl;
+            std::cout << "Invalid input. Please enter a postive integer." << std::endl;
             return promptint();
         }
     }
@@ -40,9 +40,9 @@ void trail(Nodes::Node *node);
 
 bool duplicate(const std::vector<std::string> &Inputs, const std::string &Input);
 
-int main() {
-    // prompt user to type in the name of the item they want to create
+void solution_main() {
     std::string ingredient; // name of the head ingredient item the user wants to create
+    // prompt user to type in the name of the item they want to create
     while (true) {
         std::cout << "What is the name of the ingredient you want to create?" << std::endl;
         std::getline(std::cin, ingredient);
@@ -59,6 +59,10 @@ int main() {
     Nodes::temporary::AlignAllIngredients(head);
     std::cout << "Population of Tree: " << head->population << std::endl;
     delete head;
+}
+
+int main() {
+    solution_main();
     return 0;
 }
 
@@ -215,16 +219,17 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
         while (true) {
             int choice = promptint();
             //if the user input is above the maximum index for choices or below 0, tell the user that the input is invalid
-            if (choice < 0 && choice > subnodes.size()) {
-                //if choice is less than 0 and greater than the size of the subnodes vector, the input is invalid (out of range)
-                std::cout << "Invalid input, please enter a number between 0 and " << subnodes.size() << std::endl;
-            } else if (choice == 0) {
+            bool isoutofrange = choice > subnodes.size() || choice < 0;
+            if (choice == 0) {
                 //if the user input is 0, return a new Node without cloning
                 return new Nodes::Node(Ingredient, Parent);
+            } else if (isoutofrange) {
+                //if choice is less than 0 and greater than the size of the subnodes vector, the input is invalid (out of range)
+                std::cout << "Invalid input, please enter a number between 0 and " << subnodes.size() << std::endl;
             } else {
                 //else return a clone of the Node at the selected index of the subnodes vector
                 return Nodes::clone(subnodes[choice - 1].second,
-                                    Parent, //SEGFAULT OCCURS HERE
+                                    Parent, //SEGFAULT OCCURS HERE (when choice is out of range)
                                     true);
             }
         }
