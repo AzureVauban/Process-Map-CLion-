@@ -91,7 +91,7 @@ namespace Nodes {
         }
 
         std::vector<std::pair<int, Node *>> Search(const std::string &Ingredient,
-                                                   std::vector<std::pair<int, Node *>> &Results){
+                                                   std::vector<std::pair<int, Node *>> &Results) {
             ///@brief This function will search for a Node with the given ingredient
             ///@param Ingredient The ingredient to search for
             ///@param Results The vector of results to add to
@@ -133,26 +133,22 @@ namespace Nodes {
         }
         return node;
     }
-    Node* clone(Node*Target,const bool clonesubnodes)
-    {
-        /// @brief Create a clone of the Parent node
+
+    Node *clone(Node *Target,
+                Node *Parent,
+                const bool clonesubnodes) {
+        /// @brief Create a `clone of the Parent node
         /// @param Target Node to clone from
+        /// @param Parent Node to clone to
         /// @param clonesubnodes Whether or not to clone subnodes
         /// @return a clone of a argument node
-        if (clonesubnodes && !Target->Children.empty())
-        {
-            //recursively clone subnodes
-            for (auto& subnode : Target->Children)
-            {
-                clone(subnode.second, false);
-            }
-        }
-        return new Node(Target->ingredient, 
-        Target->Parent, 
-        Target->amountonhand, 
-        Target->amountmadepercraft,
-        Target->amountneeded);
+        return new Node(Target->ingredient,
+                        Parent,
+                        Target->amountonhand,
+                        Target->amountmadepercraft,
+                        Target->amountneeded);
     }
+
     namespace temporary {
         //temporary functions for testing output to Console
         std::vector<std::string> AllIngredients(const Node *node, //* start this function off with head Node

@@ -223,7 +223,9 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
                 return new Nodes::Node(Ingredient, Parent);
             } else {
                 //else return a clone of the Node at the selected index of the subnodes vector
-                return Nodes::clone(subnodes[choice - 1].second, true);
+                return Nodes::clone(subnodes[choice - 1].second,
+                                    Parent, //SEGFAULT OCCURS HERE
+                                    true);
             }
         }
         //return new Nodes::Node(Ingredient, Parent);
