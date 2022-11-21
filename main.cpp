@@ -245,7 +245,7 @@ namespace Nodes {
                         Target->amountneeded);
     }
 }
-namespace temporary {
+
     //temporary functions for testing output to Console
     std::vector<Nodes::Info> getInfo(Nodes::Node *node, //make sure to start from head
                                      std::vector<Nodes::Info> &AddedInfo) {
@@ -258,7 +258,6 @@ namespace temporary {
     }
 
     void output(Nodes::Node *node) {
-        using namespace temporary;
         std::vector<Nodes::Info> AddedInfo = {};
         AddedInfo.emplace_back(node->getInfo());
         //overwrite header value
@@ -361,11 +360,14 @@ namespace temporary {
                       << std::endl;
         }
     }
-} // Node
+// Node
 
 Nodes::Node *populate(Nodes::Node *head);
 
-Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &ingredient);
+Nodes::Node *subpopulate(Nodes::Node *Parent, 
+const std::string &ingredient,
+const int amountmadepercraft,
+const bool promptamountmadepercraft);
 
 void trail(Nodes::Node *node);
 
@@ -409,7 +411,7 @@ void solution_main() {
     }
     auto head = populate(new Nodes::Node(ingredient));
     //Nodes::temporary::AlignAllIngredients(head);
-    temporary::output(head);
+    output(head);
     std::cout << "Population of Tree: " << head->population << std::endl;
     delete head;
 }
@@ -453,10 +455,12 @@ Nodes::Node *populate(Nodes::Node *head) {
         }
     }
     // create sub-nodes with each ingredient
+    int temp_amountmadepercraft = 0;
+    bool promptamountmadepercraft = true;
     for (auto &ingredient: ingredients) {
-        subpopulate(head, ingredient);
+        subpopulate(head, ingredient,temp_amountmadepercraft,promptamountmadepercraft);
         //update the population of the ingredient tree
-        int p = 0;
+        int p = 0; // population
         Nodes::head(head)->UpdatePopulation(Nodes::head(head)->CountNodes(p));
     }
     // recursively call this function on each sub-head
@@ -470,7 +474,10 @@ Nodes::Node *populate(Nodes::Node *head) {
     return head;
 }
 
-Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
+Nodes::Node *subpopulate(Nodes::Node *Parent,
+const std::string &Ingredient,
+const int amountmadepercraft,
+const bool promptamountmadepercraft) {
     ///@brief This function will create forward_arithmetic sub-node with the given ingredient
     ///@param Parent The parent node to create the sub-node from
     ///@param Ingredient The ingredient to create the sub-node from
