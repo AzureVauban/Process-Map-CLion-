@@ -609,7 +609,6 @@ Nodes::Node *subpopulate(Nodes::Node *Parent,
                                     true);
             }
         }
-        //return new Nodes::Node(Ingredient, Parent);
     } else {
         // if there are no ingredients from the search
         return new Nodes::Node(Ingredient, Parent,0,amountmadepercraft,1,promptamountmadepercraft);
