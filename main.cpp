@@ -618,10 +618,10 @@ void trail(Nodes::Node *node) {
 
 bool duplicate(const std::vector<std::string> &Inputs,
                const std::string &Input) {
-    ///@brief This function will check if the input is forward_arithmetic duplicate
+    ///@brief This function will check if the input is a duplicate
     ///@param Inputs The vector of inputs to check
     ///@param Input The input to check
-    ///@return True if the input is forward_arithmetic duplicate, false if it is not
+    ///@return True if the input is duplicated, false if it is not
     for (auto &input: Inputs) {
         if (input == Input) {
             return true;
