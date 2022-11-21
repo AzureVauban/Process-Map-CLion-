@@ -173,16 +173,24 @@ namespace Nodes {
         void setamounts(bool promptamountmadepercraft = true) {
             if (programmode == forward_arithmetic) {
                 //prompt amount on hand
+                std::cout << "How much " << this->ingredient
+                          << " do you have on hand?" << std::endl;
                 this->amountonhand = promptint();
             }
             //if parent exists (not nullptr)
             if (this->Parent && promptamountmadepercraft) {
                 //dont prompt if oldest sibling Node has been prompted
                 //prompt amount made per craft
+                std::cout << "How much " << this->ingredient
+                          << " does each craft of " << this->Parent->ingredient
+                          << " make?" << std::endl;
                 this->amountmadepercraft = promptint();
             }
             if (this->Parent) {
                 //prompt amount needed
+                std::cout << "How much " << this->ingredient
+                          << " do you to craft " << this->Parent->ingredient
+                          << " once?" << std::endl;
                 this->amountneeded = promptint();
             }
         }
@@ -246,128 +254,128 @@ namespace Nodes {
     }
 }
 
-    //temporary functions for testing output to Console
-    std::vector<Nodes::Info> getInfo(Nodes::Node *node, //make sure to start from head
-                                     std::vector<Nodes::Info> &AddedInfo) {
-        AddedInfo.emplace_back(node->getInfo());
-        //recurisvely itterate on each subnode
-        for (auto &child: node->Children) {
-            getInfo(child.second, AddedInfo);
-        }
-        return AddedInfo;
+//temporary functions for testing output to Console
+std::vector<Nodes::Info> getInfo(Nodes::Node *node, //make sure to start from head
+                                 std::vector<Nodes::Info> &AddedInfo) {
+    AddedInfo.emplace_back(node->getInfo());
+    //recurisvely itterate on each subnode
+    for (auto &child: node->Children) {
+        getInfo(child.second, AddedInfo);
     }
+    return AddedInfo;
+}
 
-    void output(Nodes::Node *node) {
-        std::vector<Nodes::Info> AddedInfo = {};
-        AddedInfo.emplace_back(node->getInfo());
-        //overwrite header value
-        AddedInfo[0].ingredient = "Ingredient";
-        AddedInfo[0].amountonhand = "Amount on Hand";
-        AddedInfo[0].amountneeded = "Amount Needed";
-        AddedInfo[0].amountmadepercraft = "Amount Made per Craft";
-        AddedInfo[0].amountresulted = "Amount Resulted";
-        AddedInfo[0].generation = "Generation";
-        AddedInfo[0].parentingredient = "Parent";
-        AddedInfo[0].instancekey = "Instance Key";
-        //obtain results
-        AddedInfo = getInfo(head(node), AddedInfo);
-        //insert header row and overwrite the first row
-        int longestStrings[8] = {10, //ingredient
-                                 14, //amountonhand
-                                 13, //amountneeded
-                                 21, //amountmadepercraft
-                                 15, //amountresulted
-                                 10, //generation
-                                 6, //Parent
-                                 12}; //instancekey
+void output(Nodes::Node *node) {
+    std::vector<Nodes::Info> AddedInfo = {};
+    AddedInfo.emplace_back(node->getInfo());
+    //overwrite header value
+    AddedInfo[0].ingredient = "Ingredient";
+    AddedInfo[0].amountonhand = "Amount on Hand";
+    AddedInfo[0].amountneeded = "Amount Needed";
+    AddedInfo[0].amountmadepercraft = "Amount Made per Craft";
+    AddedInfo[0].amountresulted = "Amount Resulted";
+    AddedInfo[0].generation = "Generation";
+    AddedInfo[0].parentingredient = "Parent";
+    AddedInfo[0].instancekey = "Instance Key";
+    //obtain results
+    AddedInfo = getInfo(head(node), AddedInfo);
+    //insert header row and overwrite the first row
+    int longestStrings[8] = {10, //ingredient
+                             14, //amountonhand
+                             13, //amountneeded
+                             21, //amountmadepercraft
+                             15, //amountresulted
+                             10, //generation
+                             6, //Parent
+                             12}; //instancekey
 
-        //obtain longest string length for each column
-        for (auto &info: AddedInfo) {
-            if (info.ingredient.length() > longestStrings[0]) {
-                longestStrings[0] = info.ingredient.length();
-            }
-            if (info.amountonhand.length() > longestStrings[1]) {
-                longestStrings[1] = info.amountonhand.length();
-            }
-            if (info.amountneeded.length() > longestStrings[2]) {
-                longestStrings[2] = info.amountneeded.length();
-            }
-            if (info.amountmadepercraft.length() > longestStrings[3]) {
-                longestStrings[3] = info.amountmadepercraft.length();
-            }
-            if (info.amountresulted.length() > longestStrings[4]) {
-                longestStrings[4] = info.amountresulted.length();
-            }
-            if (info.generation.length() > longestStrings[5]) {
-                longestStrings[5] = info.generation.length();
-            }
-            if (info.parentingredient.length() > longestStrings[6]) {
-                longestStrings[6] = info.parentingredient.length();
-            }
-            if (info.instancekey.length() > longestStrings[7]) {
-                longestStrings[7] = info.instancekey.length();
-            }
+    //obtain longest string length for each column
+    for (auto &info: AddedInfo) {
+        if (info.ingredient.length() > longestStrings[0]) {
+            longestStrings[0] = info.ingredient.length();
         }
-        //add extra space
-        for (auto &i: longestStrings) {
-            i += 1;
+        if (info.amountonhand.length() > longestStrings[1]) {
+            longestStrings[1] = info.amountonhand.length();
         }
-        //append whitespace to each string to align
-        for (auto &row: AddedInfo) {
-            //align ingredient column
-            while (row.ingredient.length() != longestStrings[0]) {
-                row.ingredient += " ";
-            }
-            //align amount on hand column
-            while (row.amountonhand.length() != longestStrings[1]) {
-                row.amountonhand += " ";
-            }
-            //align the amount needed column
-            while (row.amountneeded.length() != longestStrings[2]) {
-                row.amountneeded += " ";
-            }
-            //align the amount made per craft column
-            while (row.amountmadepercraft.length() != longestStrings[3]) {
-                row.amountmadepercraft += " ";
-            }
-            //align the amountresulted column
-            while (row.amountresulted.length() != longestStrings[4]) {
-                row.amountresulted += " ";
-            }
-            //align generation column
-            while (row.generation.length() != longestStrings[5]) {
-                row.generation += " ";
-            }
-            //align parent column
-            while (row.parentingredient.length() != longestStrings[6]) {
-                row.parentingredient += " ";
-            }
-            //align instance key column
-            while (row.instancekey.length() != longestStrings[7]) {
-                row.instancekey += " ";
-            }
+        if (info.amountneeded.length() > longestStrings[2]) {
+            longestStrings[2] = info.amountneeded.length();
         }
-        //print rows
-        for (auto &row: AddedInfo) {
-            std::cout << row.instancekey << " | "
-                      << row.ingredient << " | "
-                      << row.parentingredient << " | "
-                      << row.amountonhand << " | "
-                      << row.amountneeded << " | "
-                      << row.amountmadepercraft << " | "
-                      << row.amountresulted << " | "
-                      << row.generation
-                      << std::endl;
+        if (info.amountmadepercraft.length() > longestStrings[3]) {
+            longestStrings[3] = info.amountmadepercraft.length();
+        }
+        if (info.amountresulted.length() > longestStrings[4]) {
+            longestStrings[4] = info.amountresulted.length();
+        }
+        if (info.generation.length() > longestStrings[5]) {
+            longestStrings[5] = info.generation.length();
+        }
+        if (info.parentingredient.length() > longestStrings[6]) {
+            longestStrings[6] = info.parentingredient.length();
+        }
+        if (info.instancekey.length() > longestStrings[7]) {
+            longestStrings[7] = info.instancekey.length();
         }
     }
+    //add extra space
+    for (auto &i: longestStrings) {
+        i += 1;
+    }
+    //append whitespace to each string to align
+    for (auto &row: AddedInfo) {
+        //align ingredient column
+        while (row.ingredient.length() != longestStrings[0]) {
+            row.ingredient += " ";
+        }
+        //align amount on hand column
+        while (row.amountonhand.length() != longestStrings[1]) {
+            row.amountonhand += " ";
+        }
+        //align the amount needed column
+        while (row.amountneeded.length() != longestStrings[2]) {
+            row.amountneeded += " ";
+        }
+        //align the amount made per craft column
+        while (row.amountmadepercraft.length() != longestStrings[3]) {
+            row.amountmadepercraft += " ";
+        }
+        //align the amountresulted column
+        while (row.amountresulted.length() != longestStrings[4]) {
+            row.amountresulted += " ";
+        }
+        //align generation column
+        while (row.generation.length() != longestStrings[5]) {
+            row.generation += " ";
+        }
+        //align parent column
+        while (row.parentingredient.length() != longestStrings[6]) {
+            row.parentingredient += " ";
+        }
+        //align instance key column
+        while (row.instancekey.length() != longestStrings[7]) {
+            row.instancekey += " ";
+        }
+    }
+    //print rows
+    for (auto &row: AddedInfo) {
+        std::cout << row.instancekey << " | "
+                  << row.ingredient << " | "
+                  << row.parentingredient << " | "
+                  << row.amountonhand << " | "
+                  << row.amountneeded << " | "
+                  << row.amountmadepercraft << " | "
+                  << row.amountresulted << " | "
+                  << row.generation
+                  << std::endl;
+    }
+}
 // Node
 
 Nodes::Node *populate(Nodes::Node *head);
 
-Nodes::Node *subpopulate(Nodes::Node *Parent, 
-const std::string &ingredient,
-const int amountmadepercraft,
-const bool promptamountmadepercraft);
+Nodes::Node *subpopulate(Nodes::Node *Parent,
+                         const std::string &ingredient,
+                         const int amountmadepercraft,
+                         const bool promptamountmadepercraft);
 
 void trail(Nodes::Node *node);
 
@@ -456,9 +464,15 @@ Nodes::Node *populate(Nodes::Node *head) {
     }
     // create sub-nodes with each ingredient
     int temp_amountmadepercraft = 0;
-    bool promptamountmadepercraft = true;
+    bool eldestinstance = true; //do not prompt the amount made per craft if true
     for (auto &ingredient: ingredients) {
-        subpopulate(head, ingredient,temp_amountmadepercraft,promptamountmadepercraft);
+        if (eldestinstance){
+        auto _ = subpopulate(head, ingredient, temp_amountmadepercraft, eldestinstance);
+        temp_amountmadepercraft = _->amountmadepercraft;
+            eldestinstance = false;
+        } else {
+            subpopulate(head, ingredient, temp_amountmadepercraft, eldestinstance);
+        }
         //update the population of the ingredient tree
         int p = 0; // population
         Nodes::head(head)->UpdatePopulation(Nodes::head(head)->CountNodes(p));
@@ -475,9 +489,9 @@ Nodes::Node *populate(Nodes::Node *head) {
 }
 
 Nodes::Node *subpopulate(Nodes::Node *Parent,
-const std::string &Ingredient,
-const int amountmadepercraft,
-const bool promptamountmadepercraft) {
+                         const std::string &Ingredient,
+                         const int amountmadepercraft,
+                         const bool promptamountmadepercraft) {
     ///@brief This function will create forward_arithmetic sub-node with the given ingredient
     ///@param Parent The parent node to create the sub-node from
     ///@param Ingredient The ingredient to create the sub-node from
@@ -583,7 +597,7 @@ const bool promptamountmadepercraft) {
             bool isoutofrange = choice > subnodes.size() || choice < 0;
             if (choice == 0) {
                 //if the user input is 0, return forward_arithmetic new Node without cloning
-                return new Nodes::Node(Ingredient, Parent);
+                return new Nodes::Node(Ingredient, Parent,0,amountmadepercraft,1,promptamountmadepercraft);
             } else if (isoutofrange) {
                 //if choice is less than 0 and greater than the size of the subnodes vector, the input is invalid (out of range)
                 std::cout << "Invalid input, please enter forward_arithmetic number between 0 and " << subnodes.size()
@@ -591,14 +605,14 @@ const bool promptamountmadepercraft) {
             } else {
                 //else return forward_arithmetic clone of the Node at the selected index of the subnodes vector
                 return Nodes::clone(subnodes[choice - 1].second,
-                                    Parent, //SEGFAULT OCCURS HERE (when choice is out of range)
+                                    Parent,
                                     true);
             }
         }
         //return new Nodes::Node(Ingredient, Parent);
     } else {
         // if there are no ingredients from the search
-        return new Nodes::Node(Ingredient, Parent);
+        return new Nodes::Node(Ingredient, Parent,0,amountmadepercraft,1,promptamountmadepercraft);
     }
 }
 
