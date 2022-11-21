@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-//#include <iomanip>
+#include <utility>
 /*
 ONLY USE AUTO FORMATTING IN CLION IDE
 */
@@ -19,7 +19,9 @@ int promptint() {
     int output;
     std::getline(std::cin, input);
     //strip whitespace
+    input.erase(0, input.find_first_not_of(' '));
     //check if each character is a digit (no negs or decimals)
+
     ss << input;
     ss >> output;
     return output;
@@ -112,120 +114,104 @@ Nodes::Node *subpopulate(Nodes::Node *Parent, const std::string &Ingredient) {
     ///@param Ingredient The ingredient to create the sub-node from
     ///@return The sub-node created
     std::vector<std::pair<int, Nodes::Node *>> subnodes;
-    struct headerstuple {
-        /// @brief Singleton class to store the headers of the subnodes in subpopulate
-        std::string Index; // index of the subnode
-        std::string Ingredient; // ingredient of the subnode
-        std::string ParentIngredient; // Parent Ingredient of the subnode
-        std::string Generation; // generation
-        headerstuple(const int Index, std::string &Ingredient,
-                     std::string &ParentIngredient, const int Generation) {
-            std::stringstream ss;
-            // convert the index to a string
-            ss << Index;
-            this->Index = ss.str();
-            this->Ingredient = Ingredient;
-            this->ParentIngredient = ParentIngredient;
-            //clear ss
-            ss.str(std::string());
-            //convert generation into a string
-            ss << Generation;
-            this->Generation = ss.str();
-        }
-
-        ~headerstuple() {
-            //clears string
-            Index.clear();
-            Ingredient.clear();
-            ParentIngredient.clear();
-            Generation.clear();
-        }
-    };
-    std::vector<headerstuple> headers = {};
-    const int SIZEOFSEARCH = Nodes::head(Parent)->Search(Ingredient, subnodes).size();
-    if (SIZEOFSEARCH == 1 && Parent->Parent) {
-        std::cout << "\x1B[31mNOT ADDED YET, SKIPPING, ONLY 1 INGREDIENT\x1B[0m" << std::endl;
-        //todo get user input (Y/N)
+    subnodes = Nodes::head(Parent)->Search(Ingredient, subnodes);
+    if (subnodes.size() == 1) {
+        // if there is only one ingredient from the search
+        std::cout << "Do you want to make a clone of " << Ingredient << "?" << std::endl;
         return new Nodes::Node(Ingredient, Parent);
-        //todo call Nodes::Clone(NODE) on valid index
-    } else if (SIZEOFSEARCH > 1 && Parent->Parent) {
-        // create a vector of headers
-        headers.emplace_back(headerstuple(-1, // index
-                                          subnodes[0].second->ingredient, // ingredient
-                                          subnodes[0].second->Parent->ingredient, // parent ingredient
-                                          -1)); // generation
-        //overwrite the headers with the correct values
-        headers[0].Index = "Index";
-        headers[0].Ingredient = "Ingredient"; // OMIT THIS COLUMN
-        headers[0].ParentIngredient = "Parent Ingredient";
-        headers[0].Generation = "Generation";
-        //create a vector of vectors of strings
-        for (auto &subnode: subnodes) {
-            headers.emplace_back(headerstuple(subnode.first,  //index of subnode in search vector
-                                              subnode.second->ingredient, //ingredient of subnode
-                                              subnode.second->Parent->ingredient, //parent ingredient of subnode
-                                              subnode.second->generation)); //generation of subnode
+    } else if (subnodes.size() > 1) {
+        // if there are multiple ingredients from the search
+        //prompt the user to select the Node they want to clone
+        std::cout << "Which verison of " << Ingredient << " do you want to make a clone of:" << std::endl;
+        //create headers for the table
+        struct columns {
+            std::string Index;
+            std::string Parent;
+            std::string Generation;
+            std::string Choice;
+
+            columns(std::string Choice = "Choice",
+                    std::string Index = "Index",
+                    std::string Parent = "Parent Item",
+                    std::string Generation = "Generation"
+            ) {
+                this->Index = Index;
+                this->Parent = Parent;
+                this->Generation = Generation;
+                this->Choice = Choice;
+            }
+        };
+        std::vector<columns> headers = {columns()};
+        int LongestLengthAlign[4] = {6, //choice
+                                     5, //index
+                                     11, //parent
+                                     10};//generation
+        //create the table
+        for (int i = 0; i < subnodes.size(); i++) {
+            //create the row
+            headers.emplace_back(std::to_string(i + 1),
+                                 std::to_string(subnodes.at(i).first),
+                                 subnodes[i].second->ingredient,
+                                 std::to_string(subnodes[i].second->generation));
+            //check if the row is longer than the headers
+            for (int j = 0; j < 4; j++) {
+                if (headers.at(i).Index.length() > LongestLengthAlign[j]) {
+                    LongestLengthAlign[j] = headers.at(i).Index.length();
+                }
+            }
+
         }
-        //align the headers
-        int Longest[4] = {0, 0, 0, 0};
-        for (int i = 0; i < headers.size(); i++) {
-            //find the longest string in each column
-            if (headers[i].Index.length() > Longest[0]) {
-                Longest[0] = headers[i].Index.length();
-            }
-            if (headers[i].Ingredient.length() > Longest[1]) {
-                Longest[1] = headers[i].Ingredient.length();
-            }
-            if (headers[i].ParentIngredient.length() > Longest[2]) {
-                Longest[2] = headers[i].ParentIngredient.length();
-            }
-            if (headers[i].Generation.length() > Longest[3]) {
-                Longest[3] = headers[i].Generation.length();
-            }
+        for (auto &i: LongestLengthAlign) {
+            i += 1;
         }
-        //add 1 Space to each column
-        for (auto &num: Longest) {
-            num += 1;
-        }
-        //append whitespace to the end of each string to make them all the same length
+        //append whitespace to each string to align the columns
         for (auto &header: headers) {
-            //append WS to the end of all strings in the first column
-            //append the '|' character to the end of each string in ALL elements
-            while (header.Index.length() < Longest[0]) {
+            //align the Choice column
+            while (header.Choice.length() < LongestLengthAlign[0]) {
+                header.Choice += " ";
+            }
+            //align the Index column
+            while (header.Index.length() < LongestLengthAlign[1]) {
                 header.Index += " ";
             }
-            header.Index += "|";
-            //append WS to the end of all strings in the second column
-            while (header.Ingredient.length() < Longest[1]) {
-                header.Ingredient += " ";
+            //align the Parent column
+            while (header.Parent.length() < LongestLengthAlign[2]) {
+                header.Parent += " ";
             }
-            header.Ingredient += "|";
-            //append WS to the end of all strings in the third column
-            while (header.ParentIngredient.length() < Longest[2]) {
-                header.ParentIngredient += " ";
-            }
-            header.ParentIngredient += "|";
-            //append WS to the end of all strings in the fourth column
-            while (header.Generation.length() < Longest[3]) {
+            //align the Generation column
+            while (header.Generation.length() < LongestLengthAlign[3]) {
                 header.Generation += " ";
             }
         }
-        std::cout << "Type in the Index of an item you want to use: (Type a number out of range to disregard)"
-                  << std::endl;
-        //output the headers
+        const int width = headers[0].Choice.length() +
+                          headers[0].Index.length() +
+                          headers[0].Parent.length() +
+                          headers[0].Generation.length() + 4;
+        //output the table upper boundary
+        for (int i = 0; i < width; i++) {
+            std::cout << "-";
+        }
+        std::cout << std::endl;
+        //output the table
         for (auto &header: headers) {
-            std::cout << header.Index
-                      << header.Ingredient
-                      << header.ParentIngredient
+            std::cout << header.Choice << "|"
+                      << header.Index << "|"
+                      << header.Parent << "|"
                       << header.Generation << std::endl;
         }
-        //todo get user input (1-n)
+        //output the table lower boundary
+        for (int i = 0; i < width; i++) {
+            std::cout << "-";
+        }
+        std::cout << std::endl;
+        std::cout << "Enter the number (Choice) of the item you want to clone (Type 0 if you do not want to clone): "
+                  << std::endl;
         return new Nodes::Node(Ingredient, Parent);
-        //todo call Nodes::Clone(NODE) on valid index
-    } //if the size of the Search is 0, return a new subnode
-    //call search function on the head of the ingredient
-    return new Nodes::Node(Ingredient, Parent);
-
+    } else {
+        // if there are no ingredients from the search
+        return new Nodes::Node(Ingredient, Parent
+        );
+    }
 }
 
 void trail(Nodes::Node *node) {
@@ -242,7 +228,8 @@ void trail(Nodes::Node *node) {
     }
 }
 
-bool duplicate(const std::vector<std::string> &Inputs, const std::string &Input) {
+bool duplicate(const std::vector<std::string> &Inputs,
+               const std::string &Input) {
     ///@brief This function will check if the input is a duplicate
     ///@param Inputs The vector of inputs to check
     ///@param Input The input to check
