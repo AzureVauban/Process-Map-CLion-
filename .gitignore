@@ -1,6 +1,7 @@
 /cmake-build-debug/
 /.vscode
 main.exe
+solution.exe
 /.idea
 /build
 /Catch2_Tests
