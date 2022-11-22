@@ -8,13 +8,14 @@
  * = means added
  *
  * - ref count of Nodes is 0 at program termination
- * - instances are correctly created and destroyed
+ * - Instances are correctly created and destroyed
  * - recursive math methods return the correct result
  * - search (recursively) returns the correct result
  * - subpopulation function returns the correct result
  * - population function returns the correct result
  * - population function returns the correct result (int)
  */
-TEST_CASE("instances", "[instances]") {
-    REQUIRE(Nodes::returnInstances() == 0);
+TEST_CASE("Instances", "[Instances]") {
+    Nodes::Node node;
+    REQUIRE(node.Instances == 0);
 }
