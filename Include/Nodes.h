@@ -5,45 +5,43 @@
 #pragma once
 
 #include <iostream>
-#include <utility>
 #include <vector>
 #include <memory>
 
 namespace Nodes {
-    void TestFunction() { //test function, placeholder in namespace Nodes
-        std::cout << "Test Function from Nodes" << std::endl;
-    }
-
     struct Base {
         std::string ingredient;
+
+        explicit Base(std::string &ingredient) {
+            //use of explicit keyword for type safety and to prevent implicit conversions (conversion to wrong type)
+            this->ingredient = ingredient;
+        }
     };
 
     struct Node : Base {
-        /* Why is std::shared_ptr used?
-         * */
-        std::shared_ptr<Node> parent;
-        std::vector<std::shared_ptr<Node>> children;
+        static int instances; //static variable to keep track of instances
+        std::unique_ptr<Node> Parent;
 
-        Node(std::string ingredient,
-                      std::shared_ptr<Node> parent = nullptr) {
-            this->ingredient = std::move(ingredient);
-            this->parent = std::move(parent);
-            if (this->parent) {
-                std::cout << this->ingredient
-                          << " is a sub-node!" << std::endl;
-                //emplace node in parent's children vector
-                this->parent->children.emplace_back(std::make_shared<Node>(*this));
-            }
+        explicit Node(std::string &ingredient,
+                      std::unique_ptr<Node> Parent = nullptr)
+                : Base(ingredient) {
+            std::cout << "Node created with ingredient: " << ingredient << std::endl;
+            instances+=1;
+            this->Parent = std::move(Parent);
         }
+
         ~Node() {
-            std::cout << "Node " << this->ingredient << " destroyed!" << std::endl;
+            instances -= 1;
+            std::cout << "Node destroyed with ingredient: " << ingredient << std::endl;
         }
     };
 
-    Node* head(Node* node){
-    //returns the head node of the tree
-    ///@param node: the node to start from
-    ///@return: the head node of the tree
+    int Node::instances = 0; //initialize static variable
+
+    Node *head(Node *node) {
+        //returns the head node of the tree
+        ///@param node: the node to start from
+        ///@return: the head node of the tree
         return node;
     }
 }

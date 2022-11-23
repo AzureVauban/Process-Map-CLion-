@@ -16,10 +16,23 @@
  * - population function returns the correct result (int)
  */
 
-TEST_CASE("Node Child Link 1","[Creation]")
+TEST_CASE("Node Child Link 1", "[Creation]")
 {
-    //test if the sub-node is correctly created and placed into head
-    auto head = std::make_shared<Nodes::Node>("head");
-    auto child1 = std::make_shared<Nodes::Node>("child 1", head);
-    REQUIRE(head->children.size() == 1);
+    //test if the child link is correctly created
+    std::string ingredient = "Head";
+    auto head = std::make_unique<Nodes::Node>(ingredient);
+    REQUIRE(Nodes::Node::instances == 1);
+}
+
+TEST_CASE("Node Child Link 2", "[Creation]")
+{
+    /* test if the child sub-node is correctly created and linked to the parent node
+     * */
+    std::string names[] = {"Node A", "Node B"};
+    auto head = std::make_unique<Nodes::Node>(names[0]);
+    auto child = std::make_unique<Nodes::Node>(names[1], std::move(head));
+    // Add a debug point to see if the child node is linked to the parent node
+    REQUIRE(Nodes::Node::instances == 2); //check if there are 2 instances created
+    REQUIRE_FALSE(child->Parent == head); //check if the child node is linked to the parent node
+    // check if the Parent has 1 instance in the Children vector
 }
