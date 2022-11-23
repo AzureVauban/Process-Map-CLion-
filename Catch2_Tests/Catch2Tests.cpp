@@ -15,7 +15,8 @@
  * - population function returns the correct result
  * - population function returns the correct result (int)
  */
-TEST_CASE("Instances", "[Instances]") {
-    Nodes::Node node;
-    REQUIRE(node.Instances == 0);
+
+TEST_CASE("class","[class]") {
+    int test = Catch2Tests::sum(1,0);
+    REQUIRE(test == 1);
 }

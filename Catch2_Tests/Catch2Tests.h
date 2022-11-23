@@ -8,11 +8,16 @@
 #define CATCH_CONFIG_MAIN
 
 #include "catch.hpp"
-#include "../Include/Nodes.h"
+//#include "../Include/Nodes.h"
 //fake test methods
 namespace Catch2Tests { //remove this later
-    int sum(int &a, int &b) {
+    int sum(int a, int b) {
         return a + b;
     }
+
+    int subtraction(int a, int b) {
+        return a - b;
+    }
 }
+
 #endif //CATCH2_TESTS_CATCH2TESTS_H

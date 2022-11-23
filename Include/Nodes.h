@@ -5,66 +5,39 @@
 #pragma once
 
 #include <iostream>
+#include <utility>
 #include <vector>
-namespace Nodes {
-    struct Base {
-        std::string ingredient = "-";
-        int amountonhand = -1;
-        int amountneeded = -1;
-        int amountmadepercraft = -1;
-        int amountresulted = -1;
+#include <memory>
 
-        Base(std::string &ingredient,
-             int &amountonhand,
-             int &amountneeded,
-             int &amountmadepercraft) {
-            this->ingredient = ingredient;
-            this->amountonhand = amountonhand;
-            this->amountneeded = amountneeded;
-            this->amountmadepercraft = amountmadepercraft;
-            this->amountresulted = 0;
-        }
+namespace Nodes {
+    void TestFunction() { //test function, placeholder in namespace Nodes
+        std::cout << "Test Function from Nodes" << std::endl;
+    }
+
+    struct Base {
+        std::string ingredient;
     };
 
-    struct Node : public Base {
-        static int Instances;
-        int InstanceKey;
-        Node *Parent;
-        std::vector<Node *> Children;
+    struct Node : Base {
+        /* Why is std::shared_ptr used?
+         * Why is std::move used?
+         * Why is explicit keyword used?
+         * */
+        std::shared_ptr<Node> parent;
+        std::vector<std::shared_ptr<Node>> children;
 
-        Node(std::string ingredient = "", // NOLINT(google-explicit-constructor)
-             Node *Parent = nullptr,
-             int amountonhand = 0,
-             int amountmadepercraft = 1,
-             int amountneeded = 1)
-                : Base(ingredient, amountonhand,
-                       amountneeded, amountmadepercraft) {
-            Instances++;
-            this->Children = {};
-            this->InstanceKey = Instances;
-            this->Parent = Parent;
-            if (this->Parent) {
-                this->Parent->Children.emplace_back(this);
+        explicit Node(std::string ingredient,
+                      std::shared_ptr<Node> parent = nullptr) {
+            this->ingredient = std::move(ingredient);
+            this->parent = std::move(parent);
+            if (this->parent) {
+                std::cout << "This (" << this->ingredient
+                          << ") is a sub-node!" << std::endl;
             }
         }
 
         ~Node() {
-            std::cout << "Node " << this->InstanceKey << " destroyed" << std::endl;
-            for (auto &child : this->Children) {
-                delete child;
-            }
-            Instances--;
+            std::cout << "Node " << this->ingredient << " destroyed!" << std::endl;
         }
     };
-
-    int Node::Instances = 0;
-    Node* head(Node* node){
-        /// Returns the head of the tree
-        /// @param node: the node to start from
-        /// @return: the head of the tree
-        while(node->Parent){
-            node = node->Parent;
-        }
-        return node;
-    }
 }
