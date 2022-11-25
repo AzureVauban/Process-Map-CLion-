@@ -5,43 +5,64 @@
 #pragma once
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <memory>
 
 namespace Nodes {
+    /* use smart pointers to manage memory (garbage collection)
+     * */
     struct Base {
-        std::string ingredient;
+        std::string name;
 
-        explicit Base(std::string &ingredient) {
+        explicit Base(std::string &name) {
             //use of explicit keyword for type safety and to prevent implicit conversions (conversion to wrong type)
-            this->ingredient = ingredient;
+            this->name = name;
         }
     };
 
     struct Node : Base {
         static int instances; //static variable to keep track of instances
-        std::unique_ptr<Node> Parent;
+        Node *Parent;
+        std::vector<std::unique_ptr<Node>> Children;
 
-        explicit Node(std::string &ingredient,
-                      std::unique_ptr<Node> Parent = nullptr)
-                : Base(ingredient) {
-            std::cout << "Node created with ingredient: " << ingredient << std::endl;
-            instances+=1;
-            this->Parent = std::move(Parent);
+        /* example of intended link of the data tree: (head->b->f->j)
+         *               <head>
+         *              / / \ \
+         *             a b   c d
+         *             | |   | |
+         *             e f   g h
+         *              /\    /\
+         *             i j   k l
+         * */
+    private:
+        void add_child(std::string &name) {
+            //emplace "this" into Parent's children's vector
+            this->Parent->Children.emplace_back(std::make_unique<Node>(name, //name of the node
+                                                                       this)); //parent instance of the Node
+        }
+
+    public:
+        explicit Node(std::string &name,
+                      Node *Parent = nullptr)
+                : Base(name) {
+            //use of explicit keyword for type safety and to prevent implicit conversions (conversion to wrong type)
+            this->Parent = Parent;
+            if (this->Parent) {
+                std::cout << this->name << " -> "
+                          << this->Parent->name << std::endl;
+                //emplace "this" into Parent's children's vector
+                this->add_child(name);
+            }
+            instances += 1;
+
         }
 
         ~Node() {
             instances -= 1;
-            std::cout << "Node destroyed with ingredient: " << ingredient << std::endl;
+            std::cout << "Node instance destroyed with name: " << name << std::endl;
         }
     };
 
     int Node::instances = 0; //initialize static variable
-
-    Node *head(Node *node) {
-        //returns the head node of the tree
-        ///@param node: the node to start from
-        ///@return: the head node of the tree
-        return node;
-    }
 }

@@ -10,13 +10,20 @@
 #include "catch.hpp"
 #include "../Include/Nodes.h"
 //fake test methods
-namespace Catch2Tests { //remove this later
+namespace Catch2Tests {
     int sum(int a, int b) {
         return a + b;
-    }
+    } //placeholder function
 
     int subtraction(int a, int b) {
         return a - b;
+    } //placeholder function
+    static int testCount = 1;
+
+    std::string TestConcluded() {
+        std::string s = "TEST " + std::to_string(testCount) + " CONCLUDED";
+        Catch2Tests::testCount += 1;
+        return s;
     }
 }
 
