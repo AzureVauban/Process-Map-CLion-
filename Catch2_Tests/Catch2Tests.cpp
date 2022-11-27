@@ -16,7 +16,7 @@
  * - population function returns the correct result (int)
  */
 
-TEST_CASE("Node Child Link 1", "[Creation]")
+TEST_CASE("B Child Link 1", "[Creation]")
 {
     //test if the child link is correctly created
     std::string ingredient = "Head";
@@ -25,17 +25,23 @@ TEST_CASE("Node Child Link 1", "[Creation]")
     std::cout << Catch2Tests::TestConcluded() << std::endl;
 }
 
-TEST_CASE("Node Child Link 2", "[Creation]")
+TEST_CASE("B Child Link 2", "[Creation]")
 {
     /* test if the child_node sub-node is correctly created and linked to the parent node
      * */
-    std::string names[] = {"Node A",
-                           "Node B"};
+    std::string names[] = {"B A",
+                           "B B"};
     auto root = new Nodes::Node(names[0]);
     auto child_node = new Nodes::Node(names[1], root);
     // Add a debug point to see if the child_node node is linked to the parent node
     REQUIRE(Nodes::Node::instances == 2); //check if there are 2 instances created
    // REQUIRE_FALSE(child_node->Parent.get()->name ==
    //               root.get()->name); //check if the child_node node is linked to the parent node
+    std::cout << Catch2Tests::TestConcluded() << std::endl;
+}
+TEST_CASE("valgrind","[valgrind]"){
+    auto root = new temptest::B("root");
+    auto child = new temptest::B("child",root);
+    REQUIRE(TRUE);
     std::cout << Catch2Tests::TestConcluded() << std::endl;
 }

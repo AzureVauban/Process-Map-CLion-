@@ -39,7 +39,7 @@ namespace Nodes {
         void add_child(std::string &name) {
             //emplace "this" into Parent's children's vector
             this->Parent->Children.emplace_back(std::make_unique<Node>(name, //name of the node
-                                                                       this)); //parent instance of the Node
+                                                                       this)); //parent instance of the B
         }
 
     public:
@@ -60,7 +60,7 @@ namespace Nodes {
 
         ~Node() {
             instances -= 1;
-            std::cout << "Node instance destroyed with name: " << name << std::endl;
+            std::cout << "B instance destroyed with name: " << name << std::endl;
         }
     };
 
